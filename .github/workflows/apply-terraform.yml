@@ -1,4 +1,4 @@
-name: deploy-terraform
+name: apply-terraform
 
 on:
   push:
@@ -29,7 +29,7 @@ jobs:
 
       - name: Apply Terraform changes
         run: |
-          cd terraform/aws
+          cd terraform
           terraform init
           terraform apply -auto-approve
 
