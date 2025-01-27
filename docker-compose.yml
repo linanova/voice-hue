@@ -1,6 +1,8 @@
 services:
   dashboard:
     build: dashboard/.
+    depends_on:
+      - api
     ports:
       - "9090:80"
 
@@ -8,3 +10,12 @@ services:
     build: api/.
     ports:
       - "7070:80"
+
+  client:
+    build: client/.
+    profiles:
+      - rpi
+    privileged: true  # to allow access to GPIO pins
+    devices:
+      - "/dev/gpiomem:/dev/gpiomem"
+      - "/dev/mem:/dev/mem"
