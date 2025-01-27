@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -25,6 +25,6 @@ jobs:
       - name: Build and push Docker image to ECR
         run: |
           docker build -t voice-hue api
-          docker tag voice-hue:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/projects/voice-hue:latest
-          aws ecr-public get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/projects/voice-hue:latest
+          docker tag voice-hue:latest public.ecr.aws/${{ secrets.REGISTRY_ALIAS }}/projects/voice-hue:latest
+          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/${{ secrets.REGISTRY_ALIAS }}/projects/voice-hue
+          docker push public.ecr.aws/${{ secrets.REGISTRY_ALIAS }}/projects/voice-hue:latest

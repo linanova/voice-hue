@@ -3,7 +3,7 @@ FROM python:3.10-slim
 WORKDIR /app
 COPY . /app
 
-RUN pip install fastapi uvicorn
+RUN pip install -r requirements.txt
 
 EXPOSE 80
 
