@@ -3,3 +3,8 @@ services:
     build: dashboard/.
     ports:
       - "9090:80"
+
+  api:
+    build: api/.
+    ports:
+      - "7070:80"
