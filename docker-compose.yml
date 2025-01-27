@@ -1,0 +1,5 @@
+services:
+  dashboard:
+    build: dashboard/.
+    ports:
+      - "9090:80"
