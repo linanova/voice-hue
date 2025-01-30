@@ -1,4 +1,4 @@
-name: apply-terraform
+name: Manage AWS Infrastructure
 
 on:
   push:
@@ -6,6 +6,16 @@ on:
       - main
     paths:
       - "terraform/**"
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Choose whether to apply or destroy Terraform resources'
+        required: true
+        default: 'apply'
+        type: choice
+        options:
+          - apply
+          - destroy
 
 jobs:
   apply_terraform:
@@ -27,9 +37,16 @@ jobs:
         with:
           terraform_version: 1.10.4
 
-      - name: Apply Terraform changes
+      - name: Terraform Init
         run: |
           cd terraform
           terraform init
-          terraform apply -auto-approve
 
+      - name: Terraform Apply / Destroy
+        run: |
+          cd terraform
+          if [ "${{ github.event.inputs.action }}" == "destroy" ]; then
+            terraform destroy -auto-approve
+          else
+            terraform apply -auto-approve
+          fi
