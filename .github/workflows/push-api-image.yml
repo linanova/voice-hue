@@ -24,7 +24,7 @@ jobs:
 
       - name: Build and push Docker image to ECR
         run: |
-          docker build -t voice-hue api
-          docker tag voice-hue:latest public.ecr.aws/${{ secrets.REGISTRY_ALIAS }}/projects/voice-hue:latest
-          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/${{ secrets.REGISTRY_ALIAS }}/projects/voice-hue
-          docker push public.ecr.aws/${{ secrets.REGISTRY_ALIAS }}/projects/voice-hue:latest
+          docker build -t projects/voice-hue api
+          aws ecr get-login-password --region us-west-1 | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-west-1.amazonaws.com
+          docker tag projects/voice-hue:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-west-1.amazonaws.com/projects/voice-hue:latest
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-west-1.amazonaws.com/projects/voice-hue:latest
