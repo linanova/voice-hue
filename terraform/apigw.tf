@@ -29,9 +29,11 @@ resource "aws_apigatewayv2_deployment" "http" {
 }
 
 resource "aws_apigatewayv2_route" "http" {
-  api_id    = aws_apigatewayv2_api.http.id
-  route_key = "ANY /{proxy+}"
-  target    = "integrations/${aws_apigatewayv2_integration.http.id}"
+  api_id             = aws_apigatewayv2_api.http.id
+  route_key          = "ANY /{proxy+}"
+  target             = "integrations/${aws_apigatewayv2_integration.http.id}"
+  authorization_type = "CUSTOM"
+  authorizer_id      = aws_apigatewayv2_authorizer.this.id
 }
 
 resource "aws_apigatewayv2_integration" "http" {
@@ -42,4 +44,14 @@ resource "aws_apigatewayv2_integration" "http" {
   integration_method = "ANY"
   connection_type    = "VPC_LINK"
   connection_id      = aws_apigatewayv2_vpc_link.http_api.id
+}
+
+resource "aws_apigatewayv2_authorizer" "this" {
+  name             = "api-authorizer"
+  api_id           = aws_apigatewayv2_api.http.id
+  authorizer_type  = "REQUEST"
+  authorizer_uri   = aws_lambda_function.authorizer.invoke_arn
+  identity_sources = ["$request.header.Authorization"]
+
+  authorizer_payload_format_version = "2.0"
 }
