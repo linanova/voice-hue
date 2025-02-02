@@ -3,6 +3,7 @@ resource "aws_lb" "this" {
   internal           = true
   load_balancer_type = "network"
   subnets            = [aws_subnet.private.id]
+  security_groups    = [aws_security_group.fargate.id]
 }
 
 resource "aws_lb_listener" "this" {
@@ -21,6 +22,10 @@ resource "aws_lb_target_group" "this" {
   port        = 80
   protocol    = "TCP"
   target_type = "ip"
-
   vpc_id      = aws_vpc.main.id
+
+  health_check {
+    port     = 80
+    protocol = "TCP"
+  }
 }

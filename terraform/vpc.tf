@@ -61,7 +61,7 @@ resource "aws_route_table_association" "public" {
 
 resource "aws_apigatewayv2_vpc_link" "http_api" {
   name               = "http-api-vpc-link"
-  security_group_ids = [aws_vpc.main.default_security_group_id]
+  security_group_ids = [aws_security_group.fargate.id]
   subnet_ids         = [aws_subnet.private.id]
 }
 
@@ -71,11 +71,10 @@ resource "aws_security_group" "fargate" {
   vpc_id      = aws_vpc.main.id
 
   ingress {
-    from_port        = 80
-    to_port          = 80
-    protocol         = "tcp"
-    cidr_blocks      = [aws_subnet.private.cidr_block]
-
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    self        = true
   }
 
   egress {
@@ -84,13 +83,4 @@ resource "aws_security_group" "fargate" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-}
-
-resource "aws_vpc_endpoint" "ecr" {
-  vpc_id              = aws_vpc.main.id
-  vpc_endpoint_type   = "Interface"
-  service_name        = "com.amazonaws.${data.aws_region.current.name}.ecr.dkr"
-  subnet_ids          = [aws_subnet.private.id]
-  security_group_ids  = [aws_vpc.main.default_security_group_id]
-  private_dns_enabled = true
 }
