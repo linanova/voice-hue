@@ -1,0 +1,10 @@
+rpi_ws281x
+adafruit-circuitpython-neopixel
+RPi.GPIO
+setuptools
+wheel
+spacy==3.0.0
+blis==0.7.4
+nltk
+SpeechRecognition
+pyaudio
