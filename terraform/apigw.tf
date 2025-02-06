@@ -4,12 +4,12 @@ resource "aws_apigatewayv2_api" "http" {
 }
 
 resource "aws_apigatewayv2_stage" "http" {
-  name          = "$default"
-  api_id        = aws_apigatewayv2_api.http.id
+  name   = "$default"
+  api_id = aws_apigatewayv2_api.http.id
 }
 
 resource "aws_apigatewayv2_deployment" "http" {
-  api_id      = aws_apigatewayv2_api.http.id
+  api_id = aws_apigatewayv2_api.http.id
 
   triggers = {
     redeployment = sha1(join(",", tolist([

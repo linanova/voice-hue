@@ -1,8 +1,8 @@
 terraform {
   backend "s3" {
-    bucket         = "voice-hue-terraform-state"
-    key            = "terraform.tfstate"
-    region         = "us-west-1"
+    bucket = "voice-hue-terraform-state"
+    key    = "terraform.tfstate"
+    region = "us-west-1"
   }
 
   required_providers {

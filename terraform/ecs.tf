@@ -13,8 +13,8 @@ resource "aws_ecs_task_definition" "this" {
 
   container_definitions = jsonencode([
     {
-      name      = "voice-hue-api"
-      image     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.us-west-1.amazonaws.com/projects/voice-hue:latest"
+      name  = "voice-hue-api"
+      image = "${data.aws_caller_identity.current.account_id}.dkr.ecr.us-west-1.amazonaws.com/projects/voice-hue:latest"
       portMappings = [{
         containerPort = 80
         hostPort      = 80

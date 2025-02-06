@@ -8,7 +8,7 @@ resource "aws_lambda_function" "authorizer" {
 
   environment {
     variables = {
-        API_KEYS_TABLE = "voice-hue-api-keys"
+      API_KEYS_TABLE = "voice-hue-api-keys"
     }
   }
 }
@@ -27,5 +27,5 @@ resource "aws_lambda_permission" "apigw_invoke" {
 }
 
 resource "aws_cloudwatch_log_group" "authorizer" {
-  name              = "/aws/lambda/${aws_lambda_function.authorizer.function_name}"
+  name = "/aws/lambda/${aws_lambda_function.authorizer.function_name}"
 }
