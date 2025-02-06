@@ -28,11 +28,20 @@ data "aws_iam_policy_document" "ecs_ddb_access" {
   statement {
     actions = [
       "dynamodb:GetItem",
-      "dynamodb:PutItem",
-      "dynamodb:UpdateItem",
       "dynamodb:Query",
       "dynamodb:Scan",
-      "dynamodb:BatchGetItem"
+      "dynamodb:BatchGetItem",
+    ]
+    effect = "Allow"
+    resources = [
+      "arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:table/${aws_dynamodb_table.this.name}",
+      "arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:table/voice-hue-api-keys"
+    ]
+  }
+  statement {
+    actions = [
+      "dynamodb:PutItem",
+      "dynamodb:UpdateItem",
     ]
     effect    = "Allow"
     resources = ["arn:aws:dynamodb:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:table/${aws_dynamodb_table.this.name}"]
