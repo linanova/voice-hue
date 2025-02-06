@@ -19,3 +19,4 @@ services:
     devices:
       - "/dev/gpiomem:/dev/gpiomem"
       - "/dev/mem:/dev/mem"
+      - "/dev/snd:/dev/snd"
