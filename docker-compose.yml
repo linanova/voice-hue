@@ -24,6 +24,9 @@ services:
 
   client:
     build: client/.
+    environment:
+      - API_KEY=${API_KEY}
+      - API_BASE_URL=${API_BASE_URL}
     profiles:
       - rpi
     privileged: true  # to allow access to GPIO pins

@@ -1,3 +1,4 @@
+import logging
 import time
 
 import board
@@ -6,17 +7,23 @@ import spacy
 import speech_recognition as sr
 from nltk.corpus import wordnet as wn
 
-from constants import base_colors, intensities, color_map, durations
+from api import Api
+from constants import base_colors, intensities, durations
 from color import Color
 
 
 nlp = spacy.load("en_core_web_sm")
 pixels = neopixel.NeoPixel(board.D21, 9, pixel_order=neopixel.RGB)
+api = Api()
+logger = logging.getLogger()
 
 
 """
-This class is responsible for listening to voice commands and controlling the lights based on the commands.
+This class is responsible for listening to voice commands and controlling
+the lights based on the commands.
 """
+
+
 class LightCommander():
     def __init__(self):
         self.running = True
@@ -42,8 +49,9 @@ class LightCommander():
                 new_colors = self.process_command(command)
                 if len(new_colors) > 0:
                     self.pattern = new_colors
-        except sr.UnknownValueError:
-            pass
+                    api.post("commands", {"data": self.pattern, "command": command})
+        except Exception as e:
+            logger.error(f"Error processing command: {e}")
 
     """Listens for voice commands in the background."""
     def listen_for_commands(self):
@@ -53,7 +61,8 @@ class LightCommander():
         with mic as source:
             recognizer.adjust_for_ambient_noise(source)
 
-        self.stop_listening = recognizer.listen_in_background(sr.Microphone(), self.listener_callback)
+        self.stop_listening = recognizer.listen_in_background(
+            sr.Microphone(), self.listener_callback)
 
     """Processes a voice command to extract color and duration information."""
     def process_command(self, command):
