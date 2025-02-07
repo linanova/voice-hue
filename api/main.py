@@ -1,29 +1,37 @@
 from datetime import datetime
 import logging
+import os
 
 from fastapi import FastAPI, Header, HTTPException
 from pydantic import BaseModel
 import boto3
-from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
+
+TTL_TIME_SECONDS = 60 * 60 * 24 * 5
 
 app = FastAPI()
 logger = logging.getLogger()
-dynamodb = boto3.resource('dynamodb')
 
-TTL_TIME_SECONDS = 60 * 60 * 24 * 5
+endpoint_url = os.getenv('DYNAMODB_ENDPOINT_URL', None)
+dynamodb = boto3.resource('dynamodb', endpoint_url=endpoint_url)
+
 
 class Command(BaseModel):
     command: str
     data: str
 
+
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
 
+
 @app.post("/commands")
-def store_command(command: Command, authorization: str | None = Header(default=None)) -> Command:
-    logger.info(f"Storing command: {command.command} with data: {command.data}")
+def store_command(command: Command,
+                  authorization: str | None = Header(default=None)) -> Command:
+    logger.info(
+        f"Storing command: {command.command} with data: {command.data}"
+    )
     ddb_table = dynamodb.Table('voice-hue-commands')
     try:
         timestamp = int(datetime.now().timestamp())

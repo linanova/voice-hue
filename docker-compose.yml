@@ -1,6 +1,8 @@
 services:
   dashboard:
     build: dashboard/.
+    profiles:
+      - local
     depends_on:
       - api
     ports:
@@ -8,8 +10,17 @@ services:
 
   api:
     build: api/.
+    profiles:
+      - local
     ports:
       - "7070:80"
+    environment:
+      - DYNAMODB_ENDPOINT_URL=http://localstack:4566
+      - AWS_ACCESS_KEY_ID=fakeAccessKey
+      - AWS_SECRET_ACCESS_KEY=fakeSecretKey
+      - AWS_DEFAULT_REGION=us-east-1
+    depends_on:
+      - localstack
 
   client:
     build: client/.
@@ -20,3 +31,15 @@ services:
       - "/dev/gpiomem:/dev/gpiomem"
       - "/dev/mem:/dev/mem"
       - "/dev/snd:/dev/snd"
+
+  localstack:
+    image: localstack/localstack
+    profiles:
+      - local
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=dynamodb
+      - DEBUG=1
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
