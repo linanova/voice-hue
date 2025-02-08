@@ -13,6 +13,7 @@ class Api():
                  method: str,
                  url: str,
                  data: Optional[Dict] = None,
+                 params: Optional[Dict] = None,
                  headers: Optional[Dict] = None) -> Optional[Dict[str, Any]]:
         if headers is None:
             headers = {}
@@ -22,6 +23,7 @@ class Api():
                 method,
                 url,
                 json=data,
+                params=params,
                 headers={
                     'Authorization': self.api_key,
                     **headers
@@ -34,11 +36,12 @@ class Api():
 
     def get(self,
             endpoint: str,
+            params: Optional[Dict] = None,
             headers: Optional[Dict] = None) -> Optional[Dict[str, Any]]:
-        return self._request('GET', f'{self.url}/{endpoint}', headers=headers)
+        return self._request('GET', f'{self.url}/{endpoint}', params=params, headers=headers)
 
     def post(self,
              endpoint: str,
-             data: dict,
+             data: Dict,
              headers: Optional[Dict] = None) -> Optional[Dict[str, Any]]:
         return self._request('POST', f'{self.url}/{endpoint}', data=data, headers=headers)

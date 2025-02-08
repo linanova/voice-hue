@@ -1,4 +1,4 @@
-base_colors = ["red", "green", "blue", "yellow", "orange", "purple", "pink" "cyan", "white"]
+base_colors = ["red", "green", "blue", "yellow", "orange", "purple", "pink", "cyan", "white"]
 
 intensities = ["intense", "moderate", "subtle"]
 

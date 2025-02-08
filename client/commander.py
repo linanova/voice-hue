@@ -12,6 +12,11 @@ from constants import base_colors, intensities, durations
 from color import Color
 
 
+STOP_COMMAND = "stop"
+STORE_COMMAND = "remember as"
+LOAD_COMMAND = "load setting"
+
+
 nlp = spacy.load("en_core_web_sm")
 pixels = neopixel.NeoPixel(board.D21, 9, pixel_order=neopixel.RGB)
 api = Api()
@@ -42,9 +47,15 @@ class LightCommander():
     def listener_callback(self, recognizer, audio):
         try:
             command = recognizer.recognize_google(audio)
-            if command.lower() == "stop":
+            if command.lower() == STOP_COMMAND:
                 self.running = False
                 self.stop_listening(wait_for_stop=False)
+            elif command.lower().startswith(STORE_COMMAND):
+                self.store_preference(command)
+            elif command.lower().startswith(LOAD_COMMAND):
+                new_colors = self.use_preference(command)
+                if len(new_colors) > 0:
+                    self.pattern = new_colors
             else:
                 new_colors = self.process_command(command)
                 if len(new_colors) > 0:
@@ -83,6 +94,25 @@ class LightCommander():
                 colors_found.append(color_found)
 
         return [color.get_json() for color in colors_found]
+
+    """Stores a preference in the database."""
+    def store_preference(self, command):
+        name = command.split(STORE_COMMAND)[1].strip()
+        logger.info(f"Storing preference: {name} with data: {self.pattern}")
+        api.post("preferences", {
+            'text': name,
+            'data': self.pattern
+        })
+
+    """Loads a preference from the database."""
+    def use_preference(self, command):
+        name = command.split(LOAD_COMMAND)[1].strip()
+        logger.info(f"Using preference: {name}")
+        response = api.get("preferences", {"preference": name})
+        if response:
+            return response["data"]
+        else:
+            return []
 
     """Matches provided modifiers to a list of target words using WordNet synonyms."""
     def match_modifier(self, modifiers, target_list):
